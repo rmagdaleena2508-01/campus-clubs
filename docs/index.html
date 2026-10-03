@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Clubs</title>
+<meta name="description" content="One place for SRM clubs to find members, run events, take attendance, share results and give certificates and badges.">
+<style>
+  :root {
+    --bg: #fbfbfd; --card: #ffffff; --ink: #1c2230; --soft: #566077; --line: #e3e7ef;
+    --brand: #2f5bd3; --brand-ink: #ffffff; --brand-soft: #e8eefc; --good: #1f8a4c; --good-soft: #e5f5ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1218; --card: #171b24; --ink: #e8ebf2; --soft: #a3acbf; --line: #2a3040;
+      --brand: #7c9cf5; --brand-ink: #0f1218; --brand-soft: #1d2640; --good: #5fd08f; --good-soft: #17301f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.6 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 72px 0 40px; }
+  .kicker { color: var(--brand); font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+  h1 { font-size: clamp(36px, 7vw, 56px); line-height: 1.05; margin: 10px 0 14px; letter-spacing: -.02em; }
+  .lead { font-size: clamp(17px, 2.4vw, 20px); color: var(--soft); max-width: 640px; margin: 0 0 26px; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn { display: inline-block; padding: 11px 18px; border-radius: 8px; font-weight: 600; text-decoration: none;
+         border: 1px solid var(--line); color: var(--ink); background: var(--card); }
+  .btn.primary { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+  .btn:hover { filter: brightness(1.06); }
+  .flow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 34px 0 0; }
+  .flow span { background: var(--brand-soft); color: var(--brand); font-weight: 600; font-size: 14px; padding: 6px 11px; border-radius: 6px; }
+  .flow i { color: var(--soft); font-style: normal; font-size: 13px; }
+  section { padding: 34px 0; border-top: 1px solid var(--line); }
+  h2 { font-size: 24px; margin: 0 0 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .card h3 { margin: 0 0 6px; font-size: 17px; }
+  .card p { margin: 0; color: var(--soft); font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td { padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td:first-child { width: 70px; font-weight: 700; color: var(--soft); }
+  .tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 99px;
+         background: var(--brand-soft); color: var(--brand); white-space: nowrap; }
+  .tag.done { background: var(--good-soft); color: var(--good); }
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; }
+  .stack span { border: 1px solid var(--line); background: var(--card); border-radius: 99px; padding: 5px 12px; font-size: 14px; }
+  footer { padding: 30px 0 50px; color: var(--soft); font-size: 14px; border-top: 1px solid var(--line); }
+  a { color: var(--brand); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">SRM Institute of Science and Technology &middot; all campuses</div>
+    <h1>Campus Clubs</h1>
+    <p class="lead">One place for SRM clubs to find members, run events, take attendance, share results and give certificates and badges. No more Google Forms and lost WhatsApp messages.</p>
+    <div class="buttons">
+      <a class="btn primary" href="PRD.html">Read the plan (PRD)</a>
+      <a class="btn" href="PRD.pdf">Download PDF</a>
+      <a class="btn" href="https://github.com/rmagdaleena2508-01/campus-clubs">View code on GitHub</a>
+    </div>
+    <div class="flow">
+      <span>Join</span><i>then</i><span>Register</span><i>then</i><span>Check in</span><i>then</i><span>Result</span><i>then</i><span>Certificate</span><i>then</i><span>Badge</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>The problem</h2>
+    <div class="grid">
+      <div class="card"><h3>Hiring on Google Forms</h3><p>Every club has its own form and rules. People who apply never hear back.</p></div>
+      <div class="card"><h3>Events on WhatsApp</h3><p>Messages get buried. Room changes get missed. People outside the group never know.</p></div>
+      <div class="card"><h3>Results go nowhere</h3><p>Winners are said out loud on stage, then forgotten. Nothing is saved.</p></div>
+      <div class="card"><h3>No real proof</h3><p>Certificates are hand-made, easy to fake, and nobody can check them.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What it does</h2>
+    <div class="grid">
+      <div class="card"><h3>One hiring queue</h3><p>Clubs set rules once. Applicants move from Applied to Selected and see every step.</p></div>
+      <div class="card"><h3>Event pages</h3><p>Seats, room, time and live updates. SRM students are confirmed right away; outside guests wait for a yes.</p></div>
+      <div class="card"><h3>QR check-in</h3><p>Scan at the door. The code changes every 30 seconds, so screenshots don't work.</p></div>
+      <div class="card"><h3>Certificates and badges</h3><p>Made by the app, checkable by anyone, and shown on a public profile, like GitHub badges.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Roadmap</h2>
+    <table>
+      <tr><td>0</td><td>Repo, auto tests, this page <span class="tag done">live</span></td></tr>
+      <tr><td>1</td><td>Sign in with SRM Google, clubs, hiring drives <span class="tag done">backend done</span> <span class="tag">web app next</span></td></tr>
+      <tr><td>2</td><td>Events, seat limits, guest approval, live updates</td></tr>
+      <tr><td>3</td><td>QR check-in, results, certificates</td></tr>
+      <tr><td>4</td><td>Badges and public profiles</td></tr>
+      <tr><td>5</td><td>Pilot with 3 clubs, then all SRM campuses</td></tr>
+      <tr><td>6</td><td>AI club finder</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Built with</h2>
+    <div class="stack">
+      <span>Next.js</span><span>TypeScript</span><span>Tailwind CSS</span><span>FastAPI</span><span>PostgreSQL</span>
+      <span>Redis</span><span>SQLAlchemy</span><span>Vercel</span><span>Render</span><span>GitHub Actions</span>
+    </div>
+  </section>
+
+  <footer>
+    Made by an SRM student. Read the
+    <a href="https://github.com/rmagdaleena2508-01/campus-clubs/blob/main/docs/PROBLEM.md">problem</a> and
+    <a href="https://github.com/rmagdaleena2508-01/campus-clubs/blob/main/docs/ARCHITECTURE.md">architecture</a> docs.
+  </footer>
+
+</div>
+</body>
+</html>

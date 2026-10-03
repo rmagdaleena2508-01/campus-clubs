@@ -1,0 +1,39 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: clubs
+          POSTGRES_PASSWORD: clubs
+          POSTGRES_DB: clubs
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U clubs"
+          --health-interval 2s
+          --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6380:6379
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install Python and packages
+        run: uv sync --frozen
+      - name: Run tests
+        run: uv run pytest -q

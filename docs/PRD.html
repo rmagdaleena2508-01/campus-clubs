@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Campus Clubs PRD</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+  :root {
+    --ink: #1c2230; --soft: #4a5468; --line: #d9dee8; --bg-soft: #f4f6fa;
+    --brand: #2f5bd3; --brand-soft: #e8eefc; --good: #1f8a4c; --good-soft: #e5f5ec;
+    --warn: #b26a00; --warn-soft: #fdf2e0;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; color: var(--ink);
+         font-size: 11pt; line-height: 1.5; margin: 0; background: #fff; }
+  h1 { font-size: 30pt; line-height: 1.1; margin: 0 0 8pt; letter-spacing: -0.5pt; }
+  h2 { font-size: 17pt; margin: 0 0 10pt; padding-bottom: 5pt; border-bottom: 2px solid var(--brand); }
+  h2, h3 { break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 16pt 0 6pt; color: var(--brand); }
+  p { margin: 0 0 8pt; }
+  ul, ol { margin: 0 0 8pt; padding-left: 18pt; }
+  li { margin-bottom: 3pt; }
+  section { break-before: page; }
+  .keep { break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; margin: 6pt 0 12pt; font-size: 10pt; break-inside: auto; }
+  tr { break-inside: avoid; }
+  th, td { text-align: left; vertical-align: top; padding: 6pt 7pt; border: 1px solid var(--line); }
+  th { background: var(--bg-soft); font-weight: 600; }
+  code { font-family: Menlo, monospace; font-size: 9pt; background: var(--bg-soft); padding: 1px 4px; border-radius: 3px; }
+  .muted { color: var(--soft); }
+  .box { border: 1px solid var(--line); border-left: 4px solid var(--brand); background: var(--brand-soft);
+         padding: 9pt 11pt; border-radius: 4px; margin: 8pt 0 12pt; break-inside: avoid; }
+  .box.good { border-left-color: var(--good); background: var(--good-soft); }
+  .box.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+  .tag { display: inline-block; font-size: 8.5pt; font-weight: 600; padding: 1pt 6pt; border-radius: 10pt;
+         background: var(--bg-soft); border: 1px solid var(--line); }
+  .tag.done { background: var(--good-soft); border-color: #b5e0c6; color: var(--good); }
+  .tag.next { background: var(--brand-soft); border-color: #c4d3f7; color: var(--brand); }
+
+  /* cover */
+  .cover { height: 250mm; display: flex; flex-direction: column; justify-content: space-between; }
+  .cover .kicker { font-size: 11pt; font-weight: 600; color: var(--brand); letter-spacing: 1pt; text-transform: uppercase; }
+  .cover .lead { font-size: 15pt; color: var(--soft); max-width: 140mm; }
+  .cover .meta td { border: none; padding: 3pt 10pt 3pt 0; font-size: 10.5pt; }
+  .cover .meta td:first-child { color: var(--soft); width: 32mm; }
+  .flow { display: flex; gap: 4pt; flex-wrap: wrap; align-items: center; margin: 14pt 0; }
+  .flow span { background: var(--brand); color: #fff; font-weight: 600; font-size: 10pt; padding: 5pt 9pt; border-radius: 4px; }
+  .flow i { color: var(--soft); font-style: normal; }
+
+  /* architecture picture */
+  .arch { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8pt; margin: 10pt 0 14pt; break-inside: avoid; }
+  .arch div { border: 1px solid var(--line); border-radius: 6px; padding: 8pt; background: var(--bg-soft); font-size: 9.5pt; }
+  .arch b { display: block; color: var(--brand); font-size: 10.5pt; margin-bottom: 2pt; }
+  .arch .wide { grid-column: span 3; text-align: center; background: #fff; }
+
+  /* phases */
+  .phase { border: 1px solid var(--line); border-radius: 6px; padding: 10pt 12pt; margin: 0 0 10pt; break-inside: avoid; }
+  .phase h3 { margin-top: 0; display: flex; justify-content: space-between; align-items: center; }
+  .phase table { margin-bottom: 4pt; }
+  .phase td:first-child { width: 30mm; font-weight: 600; background: var(--bg-soft); }
+
+  .toc li { margin-bottom: 2pt; }
+  .small { font-size: 9.5pt; }
+</style>
+</head>
+<body>
+
+<!-- ======================= COVER ======================= -->
+<div class="cover">
+  <div>
+    <div class="kicker">Product Requirement Document</div>
+    <h1>Campus Clubs</h1>
+    <p class="lead">One place for SRM clubs to find members, run events, take attendance, share results and give certificates and badges.</p>
+    <div class="flow">
+      <span>Join</span><i>then</i><span>Register</span><i>then</i><span>Check in</span><i>then</i><span>Result</span><i>then</i><span>Certificate</span><i>then</i><span>Badge</span>
+    </div>
+  </div>
+  <div>
+    <table class="meta">
+      <tr><td>Version</td><td>1.0</td></tr>
+      <tr><td>Date</td><td>3 October 2026</td></tr>
+      <tr><td>Built by</td><td>One student developer (frontend, backend and deploy)</td></tr>
+      <tr><td>For</td><td>All SRM campuses &middot; <code>@srmist.edu.in</code></td></tr>
+      <tr><td>Status</td><td>Phase 1 backend done (27 tests pass). Frontend not started.</td></tr>
+    </table>
+    <h3>What is inside</h3>
+    <ol class="toc small">
+      <li>The problem</li>
+      <li>Why I am solving it</li>
+      <li>Who will use it</li>
+      <li>What it must do</li>
+      <li>How I will build it (my approach)</li>
+      <li>The tech stack</li>
+      <li>How the parts fit together</li>
+      <li>Keeping it safe</li>
+      <li>Handling many people at once</li>
+      <li>My three jobs: frontend, backend, deploy</li>
+      <li>The phases and where each one goes live</li>
+      <li>How every release ships</li>
+      <li>Risks and plans</li>
+      <li>Where I learn from</li>
+      <li>Word list</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ======================= 1. PROBLEM ======================= -->
+<section>
+  <h2>1. The problem</h2>
+
+  <p>SRM has many clubs, and most of them sit under the engineering departments. Every club runs on the same tools: Google Forms and WhatsApp groups. These tools do not talk to each other, so a lot gets lost.</p>
+
+  <h3>A story from today</h3>
+  <div class="box">
+    <p>Riya is in second year. She wants to join the Robotics Club.</p>
+    <ol>
+      <li>She sees a Google Form link in a WhatsApp group. She fills it in. <b>She never hears back.</b></li>
+      <li>A month later, a friend tells her about a robotics contest. She was not in the right WhatsApp group, so <b>she almost missed it.</b></li>
+      <li>On the day, the room changes. The message gets lost in 200 other messages. <b>She goes to the wrong room.</b></li>
+      <li>She takes part and her team comes second. <b>The result is never posted anywhere.</b></li>
+      <li>Later, a company asks for proof. <b>She has nothing to show.</b></li>
+    </ol>
+  </div>
+
+  <h3>What goes wrong, step by step</h3>
+  <table>
+    <tr><th style="width:24%">Step</th><th style="width:22%">Tool used today</th><th>What goes wrong</th></tr>
+    <tr><td>Finding new members</td><td>Google Form</td><td>Every club makes its own form with its own rules. Only the leader sees the answers. People who apply never hear back.</td></tr>
+    <tr><td>Telling people about an event</td><td>WhatsApp group</td><td>Messages get buried. People outside the group never know. Room or time changes get missed.</td></tr>
+    <tr><td>Signing up for an event</td><td>Another Google Form</td><td>No seat limit. Same person signs up twice. No way to check students from other colleges.</td></tr>
+    <tr><td>Attendance</td><td>Paper or a sheet</td><td>Slow and easy to fake. Often never saved.</td></tr>
+    <tr><td>Results</td><td>Nowhere</td><td>Winners are said out loud on stage and then forgotten.</td></tr>
+    <tr><td>Proof you took part</td><td>Hand-made certificate, if any</td><td>Easy to fake. Nobody can check if it is real.</td></tr>
+  </table>
+
+  <div class="box warn">
+    <b>The root problem:</b> each step lives in a different tool, so nothing flows from one step to the next. The data breaks between <i>join, sign up, attend, result</i> and <i>proof</i>.
+  </div>
+</section>
+
+<!-- ======================= 2. WHY ======================= -->
+<section>
+  <h2>2. Why I am solving it</h2>
+  <ul>
+    <li><b>I live this problem.</b> I am an SRM student. I see these forms and WhatsApp groups every week, and I know how the clubs really work.</li>
+    <li><b>It helps many people.</b> Thousands of students, and every club leader who loses a whole weekend to forms and sheets after each event.</li>
+    <li><b>It gives students real proof.</b> A profile with results, certificates and badges that anyone can check.</li>
+    <li><b>I want to learn full-stack engineering for real.</b> Frontend, backend, database, security and deploying, all on a product people actually use.</li>
+    <li><b>It has been done before, and it worked.</b> A team built a similar project called CampusConnect and won a Best Project award. I studied their code. I will keep what worked and fix the weak spots I found.</li>
+  </ul>
+
+  <h3>What I learned from CampusConnect</h3>
+  <table>
+    <tr><th style="width:50%">Keep (it worked well)</th><th>Fix (weak spots I found in their code)</th></tr>
+    <tr>
+      <td>
+        <ul>
+          <li>Clean layers: routes, then logic, then database</li>
+          <li>Club leader is a <i>membership</i>, not a login type</li>
+          <li>Certificates with a QR code that links to a public check page</li>
+          <li>The AI only phrases answers. Code picks the clubs, so the AI cannot make them up.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Anyone could sign up as an admin. Here, only I can make an owner, from the command line.</li>
+          <li>Anyone could type a fake college email. Here, SRM users must sign in with their real Google account.</li>
+          <li>Login tokens lasted 28 days in browser storage. Here, sessions sit in a safe cookie that page code can't read.</li>
+          <li>Certificate numbers could be guessed. Here, they are long random codes.</li>
+          <li>Attendance was ticked by hand. Here, it is a QR scan.</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+</section>
+
+<!-- ======================= 3. USERS ======================= -->
+<section>
+  <h2>3. Who will use it</h2>
+  <p>There is <b>no "campus admin"</b>. Each club runs itself. I (the developer) only decide which clubs get in.</p>
+  <table>
+    <tr><th style="width:22%">Role</th><th style="width:24%">Who</th><th>What they can do</th></tr>
+    <tr><td><b>Platform Owner</b></td><td>Me, the developer</td><td>Say yes or no to new clubs. Pause a club. Give a club to a new leader. Set a few rules for everyone, like the most clubs one student can join. <b>Cannot</b> see inside clubs.</td></tr>
+    <tr><td><b>Club Admin</b></td><td>Club president or head</td><td>Runs everything for their own club: hiring rules, the hiring queue, events, approving outside guests, results, certificates and posts. Can make other members Core or Admin.</td></tr>
+    <tr><td><b>Core Member</b></td><td>Club core team</td><td>Makes events, scans people in at the door, posts event updates. Cannot change club rules or roles.</td></tr>
+    <tr><td><b>Member</b></td><td>Anyone picked by the club</td><td>Sees member-only events and posts.</td></tr>
+    <tr><td><b>SRM Student</b></td><td>Anyone with <code>@srmist.edu.in</code></td><td>Signs in with Google. Applies to clubs. Signs up for events and is confirmed right away. Earns certificates and badges.</td></tr>
+    <tr><td><b>Outside Guest</b></td><td>Student from another college</td><td>Signs in with a personal email and a 6-digit code. Can sign up for open events, but must wait for the event team to say yes. Cannot join clubs.</td></tr>
+  </table>
+</section>
+
+<!-- ======================= 4. FEATURES ======================= -->
+<section>
+  <h2>4. What it must do</h2>
+
+  <h3>A. Hiring club members (replaces Google Forms)</h3>
+  <ul>
+    <li>The Club Admin sets the rules <b>once</b>: open and close dates, who can apply (year, department), how many seats, and the questions.</li>
+    <li>Every application goes into <b>one queue</b>.</li>
+    <li>Each person moves through steps: <b>Applied, Shortlisted, Interview, Selected</b> or <b>Not selected</b>.</li>
+    <li>The student sees their step live and gets told when it changes.</li>
+    <li>Picking someone as "Selected" makes them a member right away.</li>
+  </ul>
+
+  <h3>B. Events (replaces WhatsApp)</h3>
+  <ul>
+    <li>Each event has its own page: room, time, map link, seats left and live status.</li>
+    <li>Changes like "Room moved to Hall B" or "Starting now" reach everyone signed up by email and phone notification.</li>
+    <li>SRM students are confirmed right away. Outside guests wait for a yes from the event team.</li>
+    <li>The app never lets more people in than there are seats.</li>
+  </ul>
+
+  <h3>C. One flow: sign up, check in, result, certificate, badge</h3>
+  <ul>
+    <li>Check-in is a QR scan at the door. The code changes every 30 seconds, so a screenshot shared on WhatsApp will not work.</li>
+    <li>Results go on the event page and stay there forever.</li>
+    <li>Certificates are made by the app, with a QR code anyone can scan to check they are real.</li>
+  </ul>
+
+  <h3>D. One club list, one profile, real proof</h3>
+  <ul>
+    <li>A list of every club. You can filter it by campus, department and type. Your own campus shows first.</li>
+    <li>Every student gets a public page at <code>/u/their-name</code> with clubs, events, results, certificates and badges.</li>
+  </ul>
+
+  <h3>E. Badges, like GitHub</h3>
+  <ul>
+    <li>The app gives badges by itself, based on what really happened. Examples: <i>First Event, Hackathon x3, Winner, Core Member</i>.</li>
+    <li>Badges have levels like GitHub's (x2, x3, x4).</li>
+    <li>Each badge has a public check link.</li>
+    <li>A small badge card can be added to a GitHub README or a LinkedIn profile.</li>
+  </ul>
+
+  <div class="box">
+    <b>Not in version 1:</b> paid events, chat between students, a phone app from the app store (the website works well on phones) and AI features. The AI club finder comes after the main flow works.
+  </div>
+
+  <h3>How we know it works</h3>
+  <table>
+    <tr><th>Goal</th><th style="width:30%">Target</th></tr>
+    <tr><td>Clubs hire without Google Forms</td><td>3 pilot clubs run a full hiring drive in the app</td></tr>
+    <tr><td>Leaders save time</td><td>From "event ended" to "certificates sent" in under 10 minutes</td></tr>
+    <tr><td>Results are never lost</td><td>Every event in the app has public results</td></tr>
+    <tr><td>Students use their proof</td><td>Students share their profile link or badge card</td></tr>
+    <tr><td>It stays up during a rush</td><td>3,000 sign-ups in 60 seconds with no errors and no overbooking</td></tr>
+  </table>
+</section>
+
+<!-- ======================= 5. APPROACH ======================= -->
+<section>
+  <h2>5. How I will build it (my approach)</h2>
+  <ol>
+    <li><b>Start from the problem, not the code.</b> Every feature must fix a step in the "what goes wrong" table.</li>
+    <li><b>Build thin slices.</b> Each phase works from start to end: backend, frontend, tests and a live link. No half-built parts sitting around.</li>
+    <li><b>Ship every phase.</b> Every phase ends with something live that people can click.</li>
+    <li><b>Safe by default.</b> The database itself blocks bad data, like a winner who never checked in. Every permission goes through one check function.</li>
+    <li><b>Test the rules.</b> Each important rule gets a test. Tests run by themselves on every change.</li>
+    <li><b>Real users early.</b> Start with 3 clubs at one campus (KTR), learn, then open to all.</li>
+    <li><b>Write it down.</b> The docs, the database file and this PRD live in the GitHub repo and are updated with each phase.</li>
+  </ol>
+</section>
+
+<!-- ======================= 6. STACK ======================= -->
+<section>
+  <h2>6. The tech stack</h2>
+  <p>I chose these tools for three reasons: they are used by real companies (good to learn), they are safe by default, and they can grow without a rewrite.</p>
+  <table>
+    <tr><th style="width:18%">Part</th><th style="width:28%">Tool</th><th>Why, in simple words</th></tr>
+    <tr><td>Website (frontend)</td><td><b>Next.js</b> (React + TypeScript)</td><td>The most used way to build React sites. Pages like the club list load fast and show up on Google.</td></tr>
+    <tr><td>Look and feel</td><td><b>Tailwind CSS + shadcn/ui</b></td><td>Ready-made, clean parts (buttons, forms, tables) that work for everyone, including screen readers.</td></tr>
+    <tr><td>Forms and data</td><td><b>React Hook Form, Zod, TanStack Query</b></td><td>Checks forms before sending. Keeps data fresh and retries when the network is slow.</td></tr>
+    <tr><td>QR scanner</td><td>Browser camera</td><td>Core members scan in their phone browser. Nothing to install.</td></tr>
+    <tr><td>Server (backend)</td><td><b>FastAPI</b> (Python)</td><td>Fast. Checks every input. Makes API docs by itself. Python has the best tools for PDFs, QR codes and AI.</td></tr>
+    <tr><td>Database</td><td><b>PostgreSQL</b></td><td>Strong rules, so bad data can't get in. Handles many people at once.</td></tr>
+    <tr><td>Database code</td><td><b>SQLAlchemy 2 + Alembic</b></td><td>Talks to the database from Python. Alembic keeps track of database changes.</td></tr>
+    <tr><td>Fast memory</td><td><b>Redis</b></td><td>Holds logins, counts tries (to stop spam) and holds the job line.</td></tr>
+    <tr><td>Background jobs</td><td><b>arq</b> (on Redis)</td><td>Slow work like 500 certificates or emails happens in the back, so pages stay fast.</td></tr>
+    <tr><td>Files</td><td><b>Cloudflare R2</b></td><td>Stores certificates and pictures. No fee each time someone downloads.</td></tr>
+    <tr><td>Email</td><td><b>Resend</b> or Amazon SES</td><td>Sends sign-in codes and updates. Cheap and reliable.</td></tr>
+    <tr><td>Tests</td><td><b>pytest, Vitest, Playwright</b></td><td>Check the server, the website parts, and full clicks in a real browser.</td></tr>
+    <tr><td>Auto checks</td><td><b>GitHub Actions</b></td><td>Runs all tests on every push.</td></tr>
+    <tr><td>Watching for errors</td><td><b>Sentry</b></td><td>Tells me when something breaks for a user, and where.</td></tr>
+  </table>
+
+  <h3>Where each part lives</h3>
+  <table>
+    <tr><th style="width:26%">Part</th><th style="width:30%">Home</th><th>Why</th></tr>
+    <tr><td>Project page and docs</td><td><b>GitHub Pages</b></td><td>Free. Good for a simple page that never changes by itself. It can't run a server, so it holds only the project page, this PRD and the API docs.</td></tr>
+    <tr><td>The web app</td><td><b>Vercel</b></td><td>Made for Next.js. Every pull request gets its own preview link.</td></tr>
+    <tr><td>The API and job worker</td><td><b>Render</b> (or Railway)</td><td>Runs a Python server all the time. Vercel is not made for always-on workers.</td></tr>
+    <tr><td>Database</td><td><b>Neon</b> (PostgreSQL)</td><td>Free to start, with backups.</td></tr>
+    <tr><td>Redis</td><td><b>Upstash</b></td><td>Free to start, pay only for use.</td></tr>
+  </table>
+</section>
+
+<!-- ======================= 7. ARCH ======================= -->
+<section>
+  <h2>7. How the parts fit together</h2>
+  <div class="arch">
+    <div class="wide"><b>People</b>Students, club teams, outside guests and me, on a laptop or phone browser</div>
+    <div class="wide"><b>Web app on Vercel (Next.js)</b>Pages, forms, QR scanner. Talks to the API with a safe login cookie.</div>
+    <div class="wide"><b>API on Render (FastAPI)</b>Checks who you are. Checks what you are allowed to do. Follows the rules. Writes the audit log.</div>
+    <div><b>PostgreSQL (Neon)</b>Users, clubs, hiring, events, results, certificates, badges</div>
+    <div><b>Redis (Upstash)</b>Logins, spam limits, the job line</div>
+    <div><b>Job worker</b>Makes certificates, sends emails and notifications, gives badges</div>
+    <div><b>R2 storage</b>Certificate PDFs, logos, pictures</div>
+    <div><b>Google sign-in</b>Proves a user really owns an <code>@srmist.edu.in</code> account</div>
+    <div><b>Email service</b>Sign-in codes, updates</div>
+  </div>
+
+  <h3>The code inside the API</h3>
+  <table class="small">
+    <tr><th style="width:28%">Folder</th><th>What it holds</th></tr>
+    <tr><td><code>app/routers/</code></td><td>The web addresses (endpoints). Short. They call the checks and the rules.</td></tr>
+    <tr><td><code>app/permissions.py</code></td><td>One <code>can(user, action, club)</code> check used by every endpoint.</td></tr>
+    <tr><td><code>app/security/</code></td><td>Sessions, Google check, email codes, spam limits.</td></tr>
+    <tr><td><code>app/models.py</code></td><td>The database tables as Python classes.</td></tr>
+    <tr><td><code>db/schema.sql</code></td><td>The full database. The single source of truth.</td></tr>
+    <tr><td><code>tests/</code></td><td>One test for each important rule.</td></tr>
+  </table>
+</section>
+
+<!-- ======================= 8. SECURITY ======================= -->
+<section>
+  <h2>8. Keeping it safe</h2>
+  <table>
+    <tr><th style="width:28%">Danger</th><th>What we do</th></tr>
+    <tr><td>Someone pretends to be an SRM student</td><td>SRM users sign in only with Google. The server checks the account belongs to <code>srmist.edu.in</code>. A personal Gmail is turned away.</td></tr>
+    <tr><td>Someone makes themselves an admin</td><td>No sign-up form can make an owner. Only I can, from the command line. Club Admins come only from approved clubs.</td></tr>
+    <tr><td>Someone steals a login</td><td>The login is a random code in a locked cookie that page code can't read. You can log out of all devices.</td></tr>
+    <tr><td>A bad site tricks your browser into a click</td><td>Every change needs a secret token that only our own website knows (CSRF protection).</td></tr>
+    <tr><td>Someone guesses email codes</td><td>Codes expire in 10 minutes, die after 5 wrong tries, and requests are limited.</td></tr>
+    <tr><td>A friend shares a check-in QR on WhatsApp</td><td>The QR code changes every 30 seconds and works only once.</td></tr>
+    <tr><td>Someone fakes a certificate</td><td>Every certificate has a long random code and a public check page.</td></tr>
+    <tr><td>A leader does something wrong</td><td>Every admin, core and owner action is written to an audit log: who, what, before, after and when.</td></tr>
+    <tr><td>Bad data gets in</td><td>Every input is checked. The database also blocks bad data on its own, like signing up twice or a winner who never came.</td></tr>
+    <tr><td>Private data leaks</td><td>Collect only what we need. Students can delete their account. This follows India's DPDP Act 2023.</td></tr>
+  </table>
+</section>
+
+<!-- ======================= 9. SCALE ======================= -->
+<section>
+  <h2>9. Handling many people at once</h2>
+  <p>The hard moment is not "many users in total". It is <b>a rush</b>: a hackathon opens 300 seats, and 3,000 people click in the same minute.</p>
+  <ol>
+    <li><b>No overbooking.</b> A seat is taken in one database step that only works if a seat is left. People can't sign up twice.</li>
+    <li><b>Many copies of the server.</b> The server keeps nothing in its own memory. Logins sit in Redis, so 1 copy or 20 copies all work the same.</li>
+    <li><b>Slow work goes to the job line.</b> The leader clicks "Publish results" and gets an answer at once. Certificates and emails come a minute later.</li>
+    <li><b>Public pages are saved near users (CDN).</b> The club list, results and profiles load fast and barely touch the server.</li>
+    <li><b>Database care.</b> Indexes for common searches, page-by-page lists, and a pool of open connections.</li>
+    <li><b>Practice the rush.</b> Before the first big event, a test tool (k6) fakes 3,000 sign-ups in 60 seconds.</li>
+  </ol>
+</section>
+
+<!-- ======================= 10. ROLES ======================= -->
+<section>
+  <h2>10. My three jobs: frontend, backend, deploy</h2>
+  <p>I do all three jobs myself. Writing them down keeps each job clear, and shows what to hand over if more people join later.</p>
+
+  <h3>Frontend Engineer: "what people see and click"</h3>
+  <ul>
+    <li>Builds every page in Next.js: sign in, club list, club page, hiring form, queue, events, scanner, profile.</li>
+    <li>Makes it work well on phones first, since most students use phones.</li>
+    <li>Makes it easy for everyone to use (screen readers, keyboard, clear colors).</li>
+    <li>Shows clear messages when something goes wrong, and loading states while waiting.</li>
+    <li>Uses the API types made from the backend, so the two never disagree.</li>
+    <li>Writes Vitest tests for parts and Playwright tests for full click paths.</li>
+  </ul>
+
+  <h3>Backend Engineer: "the rules and the data"</h3>
+  <ul>
+    <li>Designs the database and keeps <code>db/schema.sql</code> up to date.</li>
+    <li>Builds the API endpoints in FastAPI.</li>
+    <li>Owns sign-in, sessions and the <code>can()</code> permission check.</li>
+    <li>Builds the background jobs: certificates, emails, badges.</li>
+    <li>Writes a test for every rule (seat limits, who can do what, and so on).</li>
+    <li>Keeps the API docs correct.</li>
+  </ul>
+
+  <h3>Developer / DevOps Engineer: "getting it live and keeping it up"</h3>
+  <ul>
+    <li>Sets up GitHub: branches, pull requests, issue board, GitHub Actions.</li>
+    <li>Deploys the web app to Vercel, the API to Render, and sets up Neon, Upstash and R2.</li>
+    <li>Keeps secrets (keys and passwords) out of the code, in each host's secret settings.</li>
+    <li>Sets up Sentry for errors, daily database backups and uptime checks.</li>
+    <li>Runs the rush test before big events.</li>
+    <li>Publishes the project page and docs on GitHub Pages.</li>
+  </ul>
+
+  <h3>Who does what in each phase</h3>
+  <table class="small">
+    <tr><th style="width:12%">Phase</th><th style="width:29%">Frontend</th><th style="width:29%">Backend</th><th>Developer / DevOps</th></tr>
+    <tr><td>0</td><td>Pick colors and fonts; simple landing page</td><td>Done: schema and plan</td><td>Repo, CI, GitHub Pages, Vercel and Render accounts</td></tr>
+    <tr><td>1</td><td>Sign in, setup, club list, club request, hiring form and queue</td><td>Done: sign-in, clubs, roles, hiring (27 tests)</td><td>First Vercel and Render deploy, Neon, Upstash, Google client ID</td></tr>
+    <tr><td>2</td><td>Event pages, sign-up, guest approval queue, live updates</td><td>Events, seats, guest approval, updates, notifications</td><td>Email service, push keys</td></tr>
+    <tr><td>3</td><td>QR scanner, results page, certificate check page</td><td>Check-in codes, results, certificate PDF jobs</td><td>R2 storage, job worker, rush test</td></tr>
+    <tr><td>4</td><td>Profiles, badge wall, badge card</td><td>Badge rules engine, profile API</td><td>CDN cache for public pages</td></tr>
+    <tr><td>5</td><td>Fixes from pilot feedback</td><td>Fixes from pilot feedback</td><td>Monitoring, backups, launch checklist</td></tr>
+    <tr><td>6</td><td>AI club finder chat</td><td>Grounded AI (Claude API)</td><td>Cost limits on AI</td></tr>
+  </table>
+</section>
+
+<!-- ======================= 11. PHASES ======================= -->
+<section>
+  <h2>11. The phases and where each one goes live</h2>
+  <p>Each phase ends with a live link. <b>GitHub Pages</b> holds the project page and docs. <b>Vercel</b> holds the real web app. Every pull request also gets its own Vercel preview link to test before merging. Times are for one student working part-time.</p>
+
+  <div class="phase">
+    <h3>Phase 0: Set up <span class="tag next">about 1 week</span></h3>
+    <table>
+      <tr><td>We build</td><td>GitHub repo, folders, auto tests, project landing page, this PRD.</td></tr>
+      <tr><td>Goes live on</td><td><b>GitHub Pages</b>: project page, PRD and docs.</td></tr>
+      <tr><td>Done when</td><td>The landing page is live, and tests run on every push.</td></tr>
+    </table>
+  </div>
+
+  <div class="phase">
+    <h3>Phase 1: Accounts, clubs and hiring <span class="tag done">backend done</span></h3>
+    <table>
+      <tr><td>We build</td><td>Google sign-in for SRM, email codes for guests, first-time setup (campus, department, year), club requests, my review queue, club roles, hiring drives with forms, the application queue and its steps.</td></tr>
+      <tr><td>Goes live on</td><td><b>Vercel</b>: first version of the web app. <b>Render</b>: the API.</td></tr>
+      <tr><td>Done when</td><td>A real student signs in with SRM Google, requests a club, I approve it, and the club hires one member in the app.</td></tr>
+    </table>
+  </div>
+
+  <div class="phase">
+    <h3>Phase 2: Events <span class="tag">about 2–3 weeks</span></h3>
+    <table>
+      <tr><td>We build</td><td>Make and publish events, sign up with seat limits, guest approval queue, live updates ("room moved"), email and phone notifications.</td></tr>
+      <tr><td>Goes live on</td><td><b>Vercel</b> update.</td></tr>
+      <tr><td>Done when</td><td>A club runs a real event sign-up with no Google Form and no WhatsApp message needed.</td></tr>
+    </table>
+  </div>
+
+  <div class="phase">
+    <h3>Phase 3: Check-in, results and certificates <span class="tag">about 2–3 weeks</span></h3>
+    <table>
+      <tr><td>We build</td><td>QR check-in with changing codes, results page, certificate PDFs made in the background, a public certificate check page.</td></tr>
+      <tr><td>Goes live on</td><td><b>Vercel</b> update. The rush test (3,000 sign-ups in 60 seconds) is run.</td></tr>
+      <tr><td>Done when</td><td>A leader goes from "event ended" to "certificates sent" in under 10 minutes.</td></tr>
+    </table>
+  </div>
+
+  <div class="phase">
+    <h3>Phase 4: Badges and profiles <span class="tag">about 2 weeks</span></h3>
+    <table>
+      <tr><td>We build</td><td>Public profile pages, badge rules, badge levels (x2, x3, x4), badge check links, the badge card for GitHub and LinkedIn.</td></tr>
+      <tr><td>Goes live on</td><td><b>Vercel</b> update. Public pages are cached on the CDN.</td></tr>
+      <tr><td>Done when</td><td>A student adds their badge card to their GitHub README.</td></tr>
+    </table>
+  </div>
+
+  <div class="phase">
+    <h3>Phase 5: Pilot and launch <span class="tag">about 3–4 weeks</span></h3>
+    <table>
+      <tr><td>We build</td><td>Fixes from real use. Help pages. Error alerts, backups and uptime checks.</td></tr>
+      <tr><td>Goes live on</td><td><b>Vercel</b> on the real web address. Pilot with 3 clubs at KTR, then open to all SRM campuses.</td></tr>
+      <tr><td>Done when</td><td>The 3 pilot clubs say they no longer need Google Forms.</td></tr>
+    </table>
+  </div>
+
+  <div class="phase">
+    <h3>Phase 6: AI club finder (later) <span class="tag">about 2 weeks</span></h3>
+    <table>
+      <tr><td>We build</td><td>"Tell me what you like" chat that suggests clubs and events. The code picks the clubs, and the AI only writes the reply, so it can't make clubs up.</td></tr>
+      <tr><td>Goes live on</td><td><b>Vercel</b> update.</td></tr>
+      <tr><td>Done when</td><td>Students find a club through the chat, and costs stay inside a set limit.</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ======================= 12. SHIPPING ======================= -->
+<section>
+  <h2>12. How every release ships</h2>
+  <ol>
+    <li><b>Small branch.</b> One feature per branch, for example <code>feat/event-signup</code>.</li>
+    <li><b>Pull request.</b> Explain what changed and why, in plain words.</li>
+    <li><b>Auto tests.</b> GitHub Actions runs every backend and frontend test. Red means stop.</li>
+    <li><b>Preview link.</b> Vercel makes a preview link. I click through the change on a phone and a laptop.</li>
+    <li><b>Merge.</b> Merging to <code>main</code> deploys the web app (Vercel) and the API (Render) by itself.</li>
+    <li><b>Database changes.</b> Alembic runs the change before the new API starts. Take a backup first.</li>
+    <li><b>Check.</b> Look at Sentry and the health check for 15 minutes after each release.</li>
+    <li><b>Update the docs.</b> Update the README status table and this PRD on GitHub Pages.</li>
+  </ol>
+
+  <h3>Before each phase goes live</h3>
+  <table class="small">
+    <tr><th>Check</th></tr>
+    <tr><td>All tests pass.</td></tr>
+    <tr><td>No secrets in the code.</td></tr>
+    <tr><td>New endpoints use the <code>can()</code> check and write to the audit log.</td></tr>
+    <tr><td>Pages work on a small phone screen.</td></tr>
+    <tr><td>A database backup was taken today.</td></tr>
+    <tr><td>Rollback plan: redeploy the last good version from Vercel and Render with one click.</td></tr>
+  </table>
+
+  <h2 style="margin-top:20pt">13. Risks and plans</h2>
+  <table>
+    <tr><th style="width:36%">Risk</th><th>Plan</th></tr>
+    <tr><td>Clubs keep using WhatsApp out of habit</td><td>Start with 3 friendly clubs. Make the app faster than a form. Let leaders share event links into WhatsApp.</td></tr>
+    <tr><td>One person (me) holds the owner role</td><td>More owners can be added from the command line, so the app can be handed over after I graduate.</td></tr>
+    <tr><td>Free hosting limits</td><td>Watch usage. Move to paid plans only when real use needs it.</td></tr>
+    <tr><td>Wrong campus or department list</td><td>Check the list with the college before the pilot. It is easy to change.</td></tr>
+    <tr><td>Big rush breaks sign-up</td><td>Rush test before every big event. Seat logic is checked by the database itself.</td></tr>
+    <tr><td>Too much work for one person</td><td>Thin phases. Each phase is useful alone. The AI is last and can wait.</td></tr>
+  </table>
+</section>
+
+<!-- ======================= 14. LEARN ======================= -->
+<section>
+  <h2>14. Where I learn from</h2>
+  <table class="small">
+    <tr><th style="width:34%">Topic</th><th>Resource</th></tr>
+    <tr><td>Project I studied</td><td>CampusConnect: github.com/Srivastava-Shrestha/CampusConnect</td></tr>
+    <tr><td>FastAPI basics</td><td>fastapi.tiangolo.com (Tutorial and Advanced User Guide)</td></tr>
+    <tr><td>Full app example</td><td>github.com/fastapi/full-stack-fastapi-template</td></tr>
+    <tr><td>Next.js</td><td>nextjs.org/learn (free course)</td></tr>
+    <tr><td>UI parts</td><td>ui.shadcn.com and tailwindcss.com/docs</td></tr>
+    <tr><td>Database</td><td>postgresql.org/docs and docs.sqlalchemy.org (2.0 tutorial)</td></tr>
+    <tr><td>Google sign-in</td><td>developers.google.com/identity/gsi/web ("Verify the Google ID token")</td></tr>
+    <tr><td>Security</td><td>OWASP Cheat Sheet Series (cheatsheetseries.owasp.org) and OWASP ASVS</td></tr>
+    <tr><td>Badges standard</td><td>Open Badges 3.0 by 1EdTech (imsglobal.org/spec/ob/v3p0)</td></tr>
+    <tr><td>Deploying</td><td>vercel.com/docs, render.com/docs, neon.tech/docs, upstash.com/docs</td></tr>
+    <tr><td>Rush testing</td><td>grafana.com/docs/k6</td></tr>
+    <tr><td>Learning paths</td><td>roadmap.sh (frontend, backend, DevOps)</td></tr>
+    <tr><td>AI (Phase 6)</td><td>docs.anthropic.com (Claude API, tool use)</td></tr>
+  </table>
+
+  <h2 style="margin-top:20pt">15. Word list</h2>
+  <table class="small">
+    <tr><th style="width:24%">Word</th><th>Simple meaning</th></tr>
+    <tr><td>Frontend</td><td>The part you see and click in the browser.</td></tr>
+    <tr><td>Backend</td><td>The part on the server that follows the rules and keeps the data.</td></tr>
+    <tr><td>API</td><td>The list of doors the website uses to ask the server for things.</td></tr>
+    <tr><td>Database</td><td>Where all the data is kept, in tables.</td></tr>
+    <tr><td>Deploy</td><td>Putting a new version online for people to use.</td></tr>
+    <tr><td>Session / cookie</td><td>A small note in your browser that says "this person is signed in".</td></tr>
+    <tr><td>CSRF token</td><td>A secret word our site adds to each change, so other sites can't fake clicks.</td></tr>
+    <tr><td>Audit log</td><td>A diary of who changed what, and when.</td></tr>
+    <tr><td>CDN</td><td>Copies of pages saved close to users, so they load fast.</td></tr>
+    <tr><td>Pull request</td><td>A request to add a change to the main code, after checks.</td></tr>
+    <tr><td>CI (GitHub Actions)</td><td>A robot that runs all the tests on every change.</td></tr>
+    <tr><td>Preview link</td><td>A private test copy of the site for one change.</td></tr>
+  </table>
+</section>
+
+</body>
+</html>
