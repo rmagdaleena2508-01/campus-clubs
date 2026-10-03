@@ -171,16 +171,12 @@ async def test_seat_limit(client_factory):
     assert (await admin.patch(f"/applications/{ids[1]}", json={"stage": "selected"})).status_code == 409
 
 
-async def test_outside_participants_cannot_apply_to_clubs(client_factory, sent_emails):
+async def test_outside_participants_cannot_apply_to_clubs(client_factory):
     _, admin, club = await setup_club(client_factory)
     drive = await open_drive(admin, club["id"])
 
     guest = client_factory()
-    await guest.post("/auth/email/start", json={"email": "guest@gmail.com"})
-    code = sent_emails[-1][1].split()[3].rstrip(".")
-    r = await guest.post("/auth/email/verify", json={"email": "guest@gmail.com", "code": code,
-                                                     "full_name": "Guest", "institution": "VIT"})
-    guest.headers["X-CSRF-Token"] = r.json()["csrf_token"]
+    await sign_in(guest, "guest@gmail.com", "Guest", institution="VIT")
     assert (await guest.post(f"/drives/{drive['id']}/applications", json={"answers": ANSWERS})).status_code == 403
 
 

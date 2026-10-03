@@ -28,7 +28,7 @@ class EmailCodeRequest(BaseModel):
 class EmailCodeVerify(BaseModel):
     email: EmailStr
     code: str = Field(pattern=r"^\d{6}$")
-    # needed only the first time an outside participant signs in
+    # needed only the first time someone signs in (institution only for non-SRM emails)
     full_name: str | None = Field(default=None, min_length=2, max_length=80)
     institution: str | None = Field(default=None, min_length=2, max_length=120)
 

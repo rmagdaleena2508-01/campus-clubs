@@ -81,7 +81,7 @@
       <tr><td>Date</td><td>3 October 2026</td></tr>
       <tr><td>Built by</td><td>One student developer (frontend, backend and deploy)</td></tr>
       <tr><td>For</td><td>All SRM campuses &middot; <code>@srmist.edu.in</code></td></tr>
-      <tr><td>Status</td><td>Phase 1 backend done (27 tests pass). Frontend not started.</td></tr>
+      <tr><td>Status</td><td>Phase 0 live. Phase 1 backend done (33 tests pass). Frontend next.</td></tr>
     </table>
     <h3>What is inside</h3>
     <ol class="toc small">
@@ -164,7 +164,7 @@
       <td>
         <ul>
           <li>Anyone could sign up as an admin. Here, only I can make an owner, from the command line.</li>
-          <li>Anyone could type a fake college email. Here, SRM users must sign in with their real Google account.</li>
+          <li>Anyone could type a fake college email. Here, everyone must type a code sent to that inbox, so only the real owner of an <code>@srmist.edu.in</code> email gets in as an SRM student.</li>
           <li>Login tokens lasted 28 days in browser storage. Here, sessions sit in a safe cookie that page code can't read.</li>
           <li>Certificate numbers could be guessed. Here, they are long random codes.</li>
           <li>Attendance was ticked by hand. Here, it is a QR scan.</li>
@@ -184,7 +184,7 @@
     <tr><td><b>Club Admin</b></td><td>Club president or head</td><td>Runs everything for their own club: hiring rules, the hiring queue, events, approving outside guests, results, certificates and posts. Can make other members Core or Admin.</td></tr>
     <tr><td><b>Core Member</b></td><td>Club core team</td><td>Makes events, scans people in at the door, posts event updates. Cannot change club rules or roles.</td></tr>
     <tr><td><b>Member</b></td><td>Anyone picked by the club</td><td>Sees member-only events and posts.</td></tr>
-    <tr><td><b>SRM Student</b></td><td>Anyone with <code>@srmist.edu.in</code></td><td>Signs in with Google. Applies to clubs. Signs up for events and is confirmed right away. Earns certificates and badges.</td></tr>
+    <tr><td><b>SRM Student</b></td><td>Anyone with <code>@srmist.edu.in</code></td><td>Signs in with a code sent to their SRM email. Applies to clubs. Signs up for events and is confirmed right away. Earns certificates and badges.</td></tr>
     <tr><td><b>Outside Guest</b></td><td>Student from another college</td><td>Signs in with a personal email and a 6-digit code. Can sign up for open events, but must wait for the event team to say yes. Cannot join clubs.</td></tr>
   </table>
 </section>
@@ -304,7 +304,7 @@
     <div><b>Redis (Upstash)</b>Logins, spam limits, the job line</div>
     <div><b>Job worker</b>Makes certificates, sends emails and notifications, gives badges</div>
     <div><b>R2 storage</b>Certificate PDFs, logos, pictures</div>
-    <div><b>Google sign-in</b>Proves a user really owns an <code>@srmist.edu.in</code> account</div>
+    <div><b>Email codes</b>A code sent to an <code>@srmist.edu.in</code> inbox proves the person is at SRM</div>
     <div><b>Email service</b>Sign-in codes, updates</div>
   </div>
 
@@ -313,7 +313,7 @@
     <tr><th style="width:28%">Folder</th><th>What it holds</th></tr>
     <tr><td><code>app/routers/</code></td><td>The web addresses (endpoints). Short. They call the checks and the rules.</td></tr>
     <tr><td><code>app/permissions.py</code></td><td>One <code>can(user, action, club)</code> check used by every endpoint.</td></tr>
-    <tr><td><code>app/security/</code></td><td>Sessions, Google check, email codes, spam limits.</td></tr>
+    <tr><td><code>app/security/</code></td><td>Sessions, email codes, spam limits (and Google sign-in, switched off for now).</td></tr>
     <tr><td><code>app/models.py</code></td><td>The database tables as Python classes.</td></tr>
     <tr><td><code>db/schema.sql</code></td><td>The full database. The single source of truth.</td></tr>
     <tr><td><code>tests/</code></td><td>One test for each important rule.</td></tr>
@@ -325,7 +325,7 @@
   <h2>8. Keeping it safe</h2>
   <table>
     <tr><th style="width:28%">Danger</th><th>What we do</th></tr>
-    <tr><td>Someone pretends to be an SRM student</td><td>SRM users sign in only with Google. The server checks the account belongs to <code>srmist.edu.in</code>. A personal Gmail is turned away.</td></tr>
+    <tr><td>Someone pretends to be an SRM student</td><td>Everyone signs in with a 6-digit code sent to their email. Only a person who can open an <code>@srmist.edu.in</code> inbox becomes an SRM student. Look-alike addresses become outside guests.</td></tr>
     <tr><td>Someone makes themselves an admin</td><td>No sign-up form can make an owner. Only I can, from the command line. Club Admins come only from approved clubs.</td></tr>
     <tr><td>Someone steals a login</td><td>The login is a random code in a locked cookie that page code can't read. You can log out of all devices.</td></tr>
     <tr><td>A bad site tricks your browser into a click</td><td>Every change needs a secret token that only our own website knows (CSRF protection).</td></tr>
@@ -391,7 +391,7 @@
   <table class="small">
     <tr><th style="width:12%">Phase</th><th style="width:29%">Frontend</th><th style="width:29%">Backend</th><th>Developer / DevOps</th></tr>
     <tr><td>0</td><td>Pick colors and fonts; simple landing page</td><td>Done: schema and plan</td><td>Repo, CI, GitHub Pages, Vercel and Render accounts</td></tr>
-    <tr><td>1</td><td>Sign in, setup, club list, club request, hiring form and queue</td><td>Done: sign-in, clubs, roles, hiring (27 tests)</td><td>First Vercel and Render deploy, Neon, Upstash, Google client ID</td></tr>
+    <tr><td>1</td><td>Sign in, setup, club list, club request, hiring form and queue</td><td>Done: sign-in, clubs, roles, hiring (33 tests)</td><td>First Vercel and Render deploy, Neon, Upstash, email service with a real sender domain</td></tr>
     <tr><td>2</td><td>Event pages, sign-up, guest approval queue, live updates</td><td>Events, seats, guest approval, updates, notifications</td><td>Email service, push keys</td></tr>
     <tr><td>3</td><td>QR scanner, results page, certificate check page</td><td>Check-in codes, results, certificate PDF jobs</td><td>R2 storage, job worker, rush test</td></tr>
     <tr><td>4</td><td>Profiles, badge wall, badge card</td><td>Badge rules engine, profile API</td><td>CDN cache for public pages</td></tr>
@@ -417,9 +417,9 @@
   <div class="phase">
     <h3>Phase 1: Accounts, clubs and hiring <span class="tag done">backend done</span></h3>
     <table>
-      <tr><td>We build</td><td>Google sign-in for SRM, email codes for guests, first-time setup (campus, department, year), club requests, my review queue, club roles, hiring drives with forms, the application queue and its steps.</td></tr>
+      <tr><td>We build</td><td>Email-code sign-in for everyone, first-time setup (campus, department, year), club requests, my review queue, club roles, hiring drives with forms, the application queue and its steps.</td></tr>
       <tr><td>Goes live on</td><td><b>Vercel</b>: first version of the web app. <b>Render</b>: the API.</td></tr>
-      <tr><td>Done when</td><td>A real student signs in with SRM Google, requests a club, I approve it, and the club hires one member in the app.</td></tr>
+      <tr><td>Done when</td><td>A real student signs in with a code sent to their SRM email, requests a club, I approve it, and the club hires one member in the app.</td></tr>
     </table>
   </div>
 
@@ -500,6 +500,8 @@
     <tr><td>Clubs keep using WhatsApp out of habit</td><td>Start with 3 friendly clubs. Make the app faster than a form. Let leaders share event links into WhatsApp.</td></tr>
     <tr><td>One person (me) holds the owner role</td><td>More owners can be added from the command line, so the app can be handed over after I graduate.</td></tr>
     <tr><td>Free hosting limits</td><td>Watch usage. Move to paid plans only when real use needs it.</td></tr>
+    <tr><td>Sign-in codes land in SRM spam</td><td>Send from a real domain with SPF, DKIM and DMARC set up. Test with real SRM inboxes before the pilot. Show "check your spam folder" on the code screen.</td></tr>
+    <tr><td>SRM blocks Google sign-in</td><td>Already happened. Everyone uses email codes. Google sign-in is built but switched off, and can come back if SRM IT allows it.</td></tr>
     <tr><td>Wrong campus or department list</td><td>Check the list with the college before the pilot. It is easy to change.</td></tr>
     <tr><td>Big rush breaks sign-up</td><td>Rush test before every big event. Seat logic is checked by the database itself.</td></tr>
     <tr><td>Too much work for one person</td><td>Thin phases. Each phase is useful alone. The AI is last and can wait.</td></tr>

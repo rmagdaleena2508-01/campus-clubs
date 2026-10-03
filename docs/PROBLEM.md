@@ -6,7 +6,8 @@ One platform where SRM clubs recruit members, run events, take attendance, publi
 results and issue certificates and badges. It replaces Google Forms and WhatsApp
 groups.
 
-College domain: **`@srmist.edu.in`** (SRM email runs on Google, so sign-in is "Sign in with Google").
+College domain: **`@srmist.edu.in`**. Everyone signs in with a 6-digit code sent to their email. A code that reaches an `@srmist.edu.in` inbox proves the person is at SRM.
+(Google sign-in was tried first, but SRM's Google Workspace blocks outside apps for student accounts.)
 Covers **all SRM campuses** (KTR, Ramapuram, Vadapalani, NCR, Trichy, ...), which share that domain.
 It is a **web app**: it runs in any browser on laptop or phone. Nothing to install.
 

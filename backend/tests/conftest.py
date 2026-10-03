@@ -1,7 +1,7 @@
 """
 Tests run against real Postgres and Redis from docker-compose, using a
-separate database (clubs_test) and Redis db 15. Only Google's token check is
-faked, because it needs a real browser sign-in.
+separate database (clubs_test) and Redis db 15. Emails are captured in OUTBOX
+instead of being sent.
 """
 import os
 
@@ -50,34 +50,29 @@ async def clean(database):
     yield
 
 
-@pytest.fixture
-def fake_google(monkeypatch):
-    """A Google token in tests is just 'email|name'."""
-    from app.routers import auth
-    from app.security.google import GoogleIdentity
-
-    async def verify(token: str) -> GoogleIdentity:
-        email, name = token.split("|")
-        return GoogleIdentity(sub=f"sub-{email}", email=email, name=name, picture=None)
-
-    monkeypatch.setattr(auth, "verify_google_token", verify)
+OUTBOX: list[tuple[str, str]] = []
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def sent_emails(monkeypatch):
     from app.routers import auth
 
-    outbox: list[tuple[str, str]] = []
+    OUTBOX.clear()
 
     async def capture(to, subject, body):
-        outbox.append((to, body))
+        OUTBOX.append((to, body))
 
     monkeypatch.setattr(auth, "send_email", capture)
-    return outbox
+    return OUTBOX
+
+
+def last_code(email: str) -> str:
+    body = next(body for to, body in reversed(OUTBOX) if to == email)
+    return body.split()[3].rstrip(".")
 
 
 @pytest.fixture
-def client_factory(fake_google):
+def client_factory():
     from app.main import app
 
     clients: list[AsyncClient] = []
@@ -91,8 +86,14 @@ def client_factory(fake_google):
     yield make
 
 
-async def sign_in(client: AsyncClient, email: str, name: str = "Test Student") -> dict:
-    r = await client.post("/auth/google", json={"id_token": f"{email}|{name}"})
+async def sign_in(client: AsyncClient, email: str, name: str = "Test Student",
+                  institution: str | None = None) -> dict:
+    """Sign in with an email code, the way every user does."""
+    r = await client.post("/auth/email/start", json={"email": email})
+    assert r.status_code == 200, r.text
+    r = await client.post("/auth/email/verify", json={
+        "email": email, "code": last_code(email.lower()), "full_name": name, "institution": institution,
+    })
     assert r.status_code == 200, r.text
     body = r.json()
     client.headers["X-CSRF-Token"] = body["csrf_token"]

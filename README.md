@@ -15,7 +15,7 @@ Project page: https://rmagdaleena2508-01.github.io/campus-clubs/
 | Phase | What | State |
 |---|---|---|
 | 0 | GitHub repo, auto tests on every push, project page on GitHub Pages | **Done** |
-| 1 | Sign-in (Google for SRM, email code for outsiders), onboarding, clubs, owner review, roles, recruitment drives and applications | Backend **done** (27 tests). Web app next |
+| 1 | Sign-in with email codes (an @srmist.edu.in inbox makes you an SRM student), onboarding, clubs, owner review, roles, recruitment drives and applications | Backend **done** (33 tests). Web app next |
 | 2 | Events, registration, outside-participant approval, event updates | |
 | 3 | QR check-in, results, certificates | |
 | 4 | Badges, public profiles | |
@@ -31,7 +31,7 @@ You need Docker Desktop and [uv](https://docs.astral.sh/uv/).
 ```bash
 docker compose up -d                 # Postgres on :5433, Redis on :6380
 cd backend
-cp .env.example .env                 # then fill GOOGLE_CLIENT_ID
+cp .env.example .env
 uv sync
 uv run alembic upgrade head          # create the tables
 uv run python -m app.cli seed        # campuses + departments

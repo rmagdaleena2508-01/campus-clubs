@@ -73,11 +73,17 @@ Every endpoint calls it. Postgres row-level security is a second lock.
 ## Security
 
 **Sign-in**
-- SRM users: "Sign in with Google" only. The backend verifies the Google ID token and
-  requires `email_verified = true` and `hd = "srmist.edu.in"`. No passwords to store.
+- Everyone signs in with a 6-digit code sent to their email. No passwords to store.
+- A code that reaches an `@srmist.edu.in` inbox proves the person is at SRM, so they get a
+  college account. Any other email gets an outside-guest account (`kind = external`).
+- Codes are stored only as a hash, expire after 10 minutes, die after 5 wrong tries, and
+  sending is rate-limited per email and per IP.
+- Google sign-in (with the `hd = "srmist.edu.in"` check) is built but switched off with
+  `GOOGLE_SIGNIN_ENABLED=false`, because SRM's Google Workspace blocks outside apps for
+  students. It can be turned on if SRM IT allows the app.
+- Codes must reach SRM inboxes, so the email service needs a real sender domain with
+  SPF, DKIM and DMARC set up, or SRM's mail filter may mark codes as spam.
 - First sign-in asks for campus, department and year (onboarding).
-- Outside users: one-time 6-digit code sent to their email, rate-limited. Marked
-  `kind = external`.
 
 **Sessions**
 - Server sessions in Redis. The session ID sits in an **httpOnly, Secure, SameSite=Lax**

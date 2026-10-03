@@ -1,7 +1,11 @@
 """
-Two ways in:
-  * SRM students and staff: Google sign-in, restricted to @srmist.edu.in.
-  * Outside participants: a 6-digit code sent to their personal email.
+Everyone signs in with a 6-digit code sent to their email.
+
+  * An @srmist.edu.in inbox proves the person is at SRM, so they get a college account.
+  * Any other email gets an outside-guest account.
+
+Google sign-in is kept but switched off (GOOGLE_SIGNIN_ENABLED), because SRM's
+Google Workspace currently blocks outside apps for student accounts.
 """
 from fastapi import APIRouter, Depends, Request, Response
 from redis.asyncio import Redis
@@ -26,6 +30,10 @@ from app.users import me_out, unique_handle
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+def is_college_email(email: str) -> bool:
+    return email.endswith("@" + settings.COLLEGE_DOMAIN)
+
+
 def client_ip(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
@@ -44,6 +52,8 @@ async def google_sign_in(
     db: AsyncSession = Depends(get_db),
     redis: Redis = Depends(get_redis),
 ):
+    if not settings.GOOGLE_SIGNIN_ENABLED:
+        raise AppError("Google sign-in is turned off. Sign in with an email code.", 404)
     await ratelimit.hit(redis, f"google:{client_ip(request)}", limit=30, window_seconds=600)
     identity = await verify_google_token(data.id_token)
 
@@ -78,9 +88,6 @@ async def email_code_start(
     redis: Redis = Depends(get_redis),
 ):
     email = data.email.lower()
-    if email.endswith("@" + settings.COLLEGE_DOMAIN):
-        raise AppError(f"@{settings.COLLEGE_DOMAIN} accounts sign in with Google.")
-
     await ratelimit.hit(redis, f"otp-ip:{client_ip(request)}", limit=20, window_seconds=3600)
     await ratelimit.hit(redis, f"otp-email:{email}", limit=3, window_seconds=600)
 
@@ -105,9 +112,10 @@ async def email_code_verify(
     await ratelimit.hit(redis, f"otp-verify-ip:{client_ip(request)}", limit=30, window_seconds=600)
 
     user = await db.scalar(select(User).where(User.email == email))
-    if user is None and not (data.full_name and data.institution):
-        # Ask for name and institution before burning the code
-        raise AppError("Tell us your name and college to finish signing up.", 422)
+    is_srm = is_college_email(email)
+    if user is None and not (data.full_name and (is_srm or data.institution)):
+        # Ask for the missing details before burning the code
+        raise AppError("Tell us your name" + ("" if is_srm else " and college") + " to finish signing up.", 422)
 
     await otp.check_code(redis, email, data.code)
 
@@ -116,11 +124,14 @@ async def email_code_verify(
             email=email,
             full_name=data.full_name.strip(),
             handle=await unique_handle(db, email),
-            kind=UserKind.EXTERNAL,
+            kind=UserKind.COLLEGE if is_srm else UserKind.EXTERNAL,
         )
         db.add(user)
         await db.flush()
-        db.add(ExternalProfile(user_id=user.id, institution=data.institution.strip()))
+        if is_srm:
+            db.add(StudentProfile(user_id=user.id))  # campus, department and year come at onboarding
+        else:
+            db.add(ExternalProfile(user_id=user.id, institution=data.institution.strip()))
         await db.flush()
         await db.refresh(user, ["student_profile", "external_profile"])
     elif user.deleted_at is not None:

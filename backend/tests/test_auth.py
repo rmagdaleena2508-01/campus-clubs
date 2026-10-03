@@ -1,9 +1,9 @@
 import pytest
 
-from tests.conftest import onboard, sign_in
+from tests.conftest import last_code, onboard, sign_in
 
 
-# --- Google sign-in rules (the real _verify, with Google's signature check faked) ---
+# --- Google sign-in rules (switched off for now, kept for when SRM IT allows it) ---
 
 @pytest.fixture
 def google_claims(monkeypatch):
@@ -52,16 +52,94 @@ def test_google_rejects_unverified_email(google_claims):
         _verify("token")
 
 
+# --- Email-code sign-in ---
+
+async def test_srm_email_gets_a_college_account(client_factory):
+    c = client_factory()
+    user = await sign_in(c, "AB1234@srmist.edu.in", "Asha")
+    assert user["kind"] == "college"
+    assert user["email"] == "ab1234@srmist.edu.in"
+    assert user["handle"] == "ab1234"
+    assert user["needs_onboarding"] is True
+
+
+async def test_other_email_gets_an_outside_guest_account(client_factory):
+    user = await sign_in(client_factory(), "Guest@Gmail.com", "Guest Person", institution="VIT")
+    assert user["kind"] == "external"
+    assert user["needs_onboarding"] is False
+
+
+async def test_lookalike_srm_domain_is_an_outside_guest(client_factory):
+    for email in ("x@srmist.edu.in.evil.com", "x@sub.srmist.edu.in", "x@fake-srmist.edu.in"):
+        user = await sign_in(client_factory(), email, "Faker", institution="Nowhere")
+        assert user["kind"] == "external", email
+
+
+async def test_new_user_must_give_details_before_code_is_used(client_factory):
+    c = client_factory()
+    await c.post("/auth/email/start", json={"email": "guest@gmail.com"})
+    code = last_code("guest@gmail.com")
+    # outsiders need a name and a college; the code is not burned by this
+    r = await c.post("/auth/email/verify", json={"email": "guest@gmail.com", "code": code, "full_name": "G P"})
+    assert r.status_code == 422
+    r = await c.post("/auth/email/verify", json={"email": "guest@gmail.com", "code": code,
+                                                 "full_name": "G P", "institution": "VIT"})
+    assert r.status_code == 200
+
+
+async def test_returning_user_needs_only_the_code(client_factory):
+    first = await sign_in(client_factory(), "ab1234@srmist.edu.in", "Asha")
+    c = client_factory()
+    await c.post("/auth/email/start", json={"email": "ab1234@srmist.edu.in"})
+    r = await c.post("/auth/email/verify", json={"email": "ab1234@srmist.edu.in",
+                                                 "code": last_code("ab1234@srmist.edu.in")})
+    assert r.status_code == 200
+    assert r.json()["user"]["id"] == first["id"]
+
+
+async def test_wrong_code_is_refused(client_factory):
+    c = client_factory()
+    await c.post("/auth/email/start", json={"email": "guest@gmail.com"})
+    code = last_code("guest@gmail.com")
+    wrong = "000000" if code != "000000" else "111111"
+    r = await c.post("/auth/email/verify", json={"email": "guest@gmail.com", "code": wrong,
+                                                 "full_name": "G P", "institution": "VIT"})
+    assert r.status_code == 400
+
+
+async def test_email_code_is_burned_after_too_many_wrong_guesses(client_factory):
+    c = client_factory()
+    await c.post("/auth/email/start", json={"email": "guest@gmail.com"})
+    code = last_code("guest@gmail.com")
+    wrong = "000000" if code != "000000" else "111111"
+    for _ in range(5):
+        await c.post("/auth/email/verify", json={"email": "guest@gmail.com", "code": wrong,
+                                                 "full_name": "G P", "institution": "VIT"})
+    r = await c.post("/auth/email/verify", json={"email": "guest@gmail.com", "code": code,
+                                                 "full_name": "G P", "institution": "VIT"})
+    assert r.status_code == 400  # even the right code no longer works
+
+
+async def test_email_code_requests_are_rate_limited(client_factory):
+    c = client_factory()
+    codes = [(await c.post("/auth/email/start", json={"email": "spam@gmail.com"})).status_code for _ in range(4)]
+    assert codes == [200, 200, 200, 429]
+
+
+async def test_google_sign_in_is_switched_off(client_factory):
+    r = await client_factory().post("/auth/google", json={"id_token": "x" * 20})
+    assert r.status_code == 404
+
+
 # --- Sessions ---
 
-async def test_sign_in_sets_httponly_cookie_and_needs_onboarding(client_factory):
+async def test_sign_in_sets_httponly_cookie(client_factory):
     c = client_factory()
-    r = await c.post("/auth/google", json={"id_token": "ab1234@srmist.edu.in|Asha"})
-    assert r.status_code == 200
+    await c.post("/auth/email/start", json={"email": "ab1234@srmist.edu.in"})
+    r = await c.post("/auth/email/verify", json={"email": "ab1234@srmist.edu.in",
+                                                 "code": last_code("ab1234@srmist.edu.in"), "full_name": "Asha"})
     cookie = r.headers["set-cookie"].lower()
     assert "httponly" in cookie and "samesite=lax" in cookie
-    assert r.json()["user"]["needs_onboarding"] is True
-    assert r.json()["user"]["handle"] == "ab1234"
 
 
 async def test_write_without_csrf_token_is_refused(client_factory):
@@ -90,47 +168,9 @@ async def test_onboarding_rejects_duplicate_register_no(client_factory):
     assert r.status_code == 409
 
 
-# --- Outside participants (email code) ---
-
-async def test_outside_participant_code_flow(client_factory, sent_emails):
+async def test_outside_guest_cannot_onboard_as_student(client_factory):
     c = client_factory()
-    assert (await c.post("/auth/email/start", json={"email": "Guest@Gmail.com"})).status_code == 200
-    to, body = sent_emails[-1]
-    code = body.split()[3].rstrip(".")
-    assert to == "guest@gmail.com"
-
-    wrong = await c.post("/auth/email/verify", json={
-        "email": "guest@gmail.com", "code": "000000" if code != "000000" else "111111",
-        "full_name": "Guest Person", "institution": "VIT"})
-    assert wrong.status_code == 400
-
-    r = await c.post("/auth/email/verify", json={
-        "email": "guest@gmail.com", "code": code, "full_name": "Guest Person", "institution": "VIT"})
-    assert r.status_code == 200, r.text
-    assert r.json()["user"]["kind"] == "external"
-    assert r.json()["user"]["needs_onboarding"] is False
-
-
-async def test_srm_email_cannot_use_email_codes(client_factory, sent_emails):
-    r = await client_factory().post("/auth/email/start", json={"email": "ab1234@srmist.edu.in"})
-    assert r.status_code == 400
-    assert sent_emails == []
-
-
-async def test_email_code_is_burned_after_too_many_wrong_guesses(client_factory, sent_emails):
-    c = client_factory()
-    await c.post("/auth/email/start", json={"email": "guest@gmail.com"})
-    code = sent_emails[-1][1].split()[3].rstrip(".")
-    wrong = "000000" if code != "000000" else "111111"
-    for _ in range(5):
-        await c.post("/auth/email/verify", json={"email": "guest@gmail.com", "code": wrong,
-                                                 "full_name": "G P", "institution": "VIT"})
-    r = await c.post("/auth/email/verify", json={"email": "guest@gmail.com", "code": code,
-                                                 "full_name": "G P", "institution": "VIT"})
-    assert r.status_code == 400  # even the right code no longer works
-
-
-async def test_email_code_requests_are_rate_limited(client_factory, sent_emails):
-    c = client_factory()
-    codes = [(await c.post("/auth/email/start", json={"email": "spam@gmail.com"})).status_code for _ in range(4)]
-    assert codes == [200, 200, 200, 429]
+    await sign_in(c, "guest@gmail.com", institution="VIT")
+    r = await c.put("/me/onboarding", json={"campus_id": 1, "department_id": 1, "year_of_study": 2,
+                                           "register_no": "RA2211003010009"})
+    assert r.status_code == 403

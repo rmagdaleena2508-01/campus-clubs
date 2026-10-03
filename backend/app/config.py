@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     REDIS_URL: str = "redis://localhost:6380/0"
 
+    GOOGLE_SIGNIN_ENABLED: bool = False  # off: SRM Workspace blocks outside apps for now
     GOOGLE_CLIENT_ID: str = ""
     COLLEGE_DOMAIN: str = "srmist.edu.in"
     FRONTEND_URL: str = "http://localhost:3000"
